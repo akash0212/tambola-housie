@@ -6,5 +6,5 @@
 - I have created this app by merging multiple available sites and merging them into one :)
 
 ```
-	open tambola.html in chrome for better performance
+	open tambola.htm in chrome for better performance
 ```

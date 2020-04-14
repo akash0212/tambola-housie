@@ -1,0 +1,1053 @@
+
+<html>
+    <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bingo/Housie/Tambola Board</title>
+        <style>
+            *{
+                font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            }
+            .container{
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+            #grid-container{
+                margin-top: 20px;
+                max-width: 900px;
+                width: 100%;
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .num{
+                width: 9%;
+                margin: 2px;
+                border: 1px solid #CCC;
+                display: inline-block;
+                color: #CCC;
+                font-size: 24px;
+                box-sizing: border-box;
+            }
+            .numCard{
+                width: 10%;
+                margin: 2px;
+                border: 1px solid #828282;
+                display: inline-block;
+                color: #3c3535;
+                font-size: 24px;
+                box-sizing: border-box;
+            }
+            .numCardHeader{
+                width: 99%;
+                margin: 2px;
+                border: 1px solid #828282;
+                display: inline-block;
+                color: #3c3535;
+                font-size: 14px;
+                box-sizing: border-box;
+            }
+            .numCard-yellow{
+                background-color: yellow;
+            }
+            .generated{
+                border-color: blue;
+                color: blue;
+                background-color:lavender;
+            }
+
+            #generator-container{
+                border:1px solid #888;
+                display: block;
+                position: fixed;
+                left: 20px;
+                top: 80px;
+                padding: 20px;
+                text-align: center;
+                box-sizing: border-box;
+                background-color: #FFF;
+            }
+
+            #number{
+                font-size: 36px;
+                text-align: center;
+                color: blue;
+                font-weight: bold;
+                margin-top: 40px;
+                display: inline-block;
+                background-color: #EEE;
+                padding: 20px;
+                border-radius: 10px;
+                border:1px solid #EEE;
+            }
+            .lastNumber{
+                font-size: 14px;
+                text-align: center;
+                color: green;
+                font-weight: bold;
+                margin-top: 10px;
+                display: inline-block;
+                background-color: #EEE;
+                padding: 10px;
+                border-radius: 10px;
+                border:1px solid #EEE;
+            }
+            #numberCalls{
+                font-size: 12px;
+                text-align: left;
+                color: blue;
+                font-weight: bold;
+                margin-top: 40px;
+                display: inline-block;
+                background-color: #EEE;
+                padding: 20px;
+                border-radius: 10px;
+                border:1px solid #EEE;
+            }
+            #player_name{
+              height: 38px;
+              font-size: 16px;
+            }
+
+            .btn-generate{
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background-color: #0099ff;
+                color: white;
+                width: 100px;
+                font-size: 14px;
+                padding: 10px;
+                cursor: pointer;
+                border:1px solid #0099ff;
+                border-radius: 5px;
+            }
+            .btn-generate:active{
+                position: relative;
+                left: 1;
+                top: 1;
+            }
+
+            #banner-container{
+                border:1px solid #888;
+                display: block;
+                position: fixed;
+                right: 20px;
+                top: 80px;
+                padding: 20px;
+                text-align: center;
+                box-sizing: border-box;
+                background-color: #FFF;
+            }
+
+            #footer{
+                font-size: 18px;
+                text-align: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                color: #888;
+            }
+
+            a:link, a:visited{
+                color: blue;
+                text-decoration: none;
+            }
+
+            a:hover{
+                color: red;
+            }
+
+            #um-banner{
+                margin-top: 15px;
+                border-top: 1px solid #888;
+                padding-top: 15px;
+            }
+
+            @media screen and (min-width: 350px) and (max-width: 799px) {
+                #hv-banner{
+                    display: inline-block;
+                    vertical-align: top;
+                }
+                #um-banner{
+                    display: inline-block;
+                    padding-top: 0;
+                    margin-top: 0;
+                    border-top: none;
+                    margin-left: 30px;
+                    vertical-align: top;
+                }
+            }
+
+            @media screen and (max-width: 799px) {
+                .container{
+                    width: 100%;
+                }
+
+                #generator-container{
+                    position: relative;
+                    left: 0;
+                    top: 0;
+                    display: block;
+                }
+
+                #banner-container{
+                    position: relative;
+                    left: 0;
+                    top: 0;
+                    display: block;
+                    margin-top: 20px;
+                    border: none;
+                }
+
+                #grid-container{
+                    width: 100%;
+                }
+
+                .num{
+                    padding: 2px;
+                    font-size: 14px;
+                    margin: 1px;
+                }
+            }
+
+            @media screen and (min-width: 800px) and (max-width: 1300px){
+                #grid-container{
+                    width: 600px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Bingo/Housie/Tambola Board</h2>
+
+            <div id="generator-container">
+                    <input type="button" value="Draw Token" class="btn-generate" onclick="generateNum()">
+                    <br>
+                    <div id="number">&nbsp;&nbsp;</div>
+                    <br>
+                    <div class="lastNumber" id="number_3">&nbsp;&nbsp;</div>
+                    <div class="lastNumber" id="number_2">&nbsp;&nbsp;</div>
+                    <div class="lastNumber" id="number_1">&nbsp;&nbsp;</div>
+                    <br>
+                    <div id="numberCalls">&nbsp;&nbsp;</div>
+                    <br>
+                    <br>
+                    <input type="button" value="Undo Token" class="btn-generate" onclick="undoNumber()">
+                    <br>
+                </div>
+
+            <div id="grid-container"></div>
+            <div id="banner-container" >
+              <input placeholder="Name Please" id="player_name">
+              <br>
+              <br>
+              <input type="button" value="Get Ticket" class="btn-generate" onclick="generateCard()">
+
+            </div>
+            <div id="card-container" style="width:367px; height: 145px; display:none"></div>
+        </div>
+
+        <div id="footer">
+            Created by Akash Jain.
+
+        </div>
+        <canvas id="canvas" style="border:2px solid black; display:none" width="200" height="200"></canvas>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>
+            var callings = [
+                              {
+                                  "No": "1",
+                                  "Option 1": "Lone ranger",
+                                  "Option 2": "Buttered scone",
+                                  "Option 3": "Top of the house number 1",
+                                  "Option 4": "Son of a gun",
+                                  "Option 5": "At the beginning"
+                              },
+                              {
+                                  "No": "2",
+                                  "Option 1": "One little duck",
+                                  "Option 2": "Me and you",
+                                  "Option 3": "Kaala dhan",
+                                  "Option 4": "Doctor who"
+                              },
+                              {
+                                  "No": "3",
+                                  "Option 1": "Happy family",
+                                  "Option 2": "goodness me"
+                              },
+                              {
+                                  "No": "4",
+                                  "Option 1": "Murgi chor",
+                                  "Option 2": "Knock at the door",
+                                  "Option 3": "Hum 2 hamare 2"
+                              },
+                              {
+                                  "No": "5",
+                                  "Option 1": "Hum paanch",
+                                  "Option 2": "Symbol of congress",
+                                  "Option 3": "Punjab da puttar",
+                                  "Option 4": "Fingers in your hand"
+                              },
+                              {
+                                  "No": "6",
+                                  "Option 1": "Bottom heavy",
+                                  "Option 2": "Chopping sticks",
+                                  "Option 3": "Super sixer",
+                                  "Option 4": "In a fix"
+                              },
+                              {
+                                  "No": "7",
+                                  "Option 1": "Lucky no. Seven",
+                                  "Option 2": "One hockey stick",
+                                  "Option 3": "God’s in Heaven",
+                                  "Option 4": "days in a week",
+                                  "Option 5": "Colours of rainbow"
+                              },
+                              {
+                                  "No": "8",
+                                  "Option 1": "One fat major",
+                                  "Option 2": "Garden gate",
+                                  "Option 3": "Big fat lady number 8"
+                              },
+                              {
+                                  "No": "9",
+                                  "Option 1": "You are mine",
+                                  "Option 2": "Number of planets",
+                                  "Option 3": "Doctor’s time"
+                              },
+                              {
+                                  "No": "10",
+                                  "Option 1": "A big fat hen",
+                                  "Option 2": "Cock and hen",
+                                  "Option 3": "Uncle Ben"
+                              },
+                              {
+                                  "No": "11",
+                                  "Option 1": "Two heavenly legs",
+                                  "Option 2": "Two beautiful legs",
+                                  "Option 3": "Sexy legs"
+                              },
+                              {
+                                  "No": "12",
+                                  "Option 1": "One dozen",
+                                  "Option 2": "Monkeys cousin, one dozen"
+                              },
+                              {
+                                  "No": "13",
+                                  "Option 1": "Bakers dozen",
+                                  "Option 2": "Unlucky for some lucky for me no"
+                              },
+                              {
+                                  "No": "14",
+                                  "Option 1": "Valentine’s Day",
+                                  "Option 2": "Tender chick"
+                              },
+                              {
+                                  "No": "15",
+                                  "Option 1": "Yet to be kissed"
+                              },
+                              {
+                                  "No": "16",
+                                  "Option 1": "Sweet sixteen",
+                                  "Option 2": "never been kissed"
+                              },
+                              {
+                                  "No": "17",
+                                  "Option 1": "Dancing Queen",
+                                  "Option 2": "Not so sweet"
+                              },
+                              {
+                                  "No": "18",
+                                  "Option 1": "Voting age"
+                              },
+                              {
+                                  "No": "19",
+                                  "Option 1": "Last of the teens",
+                                  "Option 2": "End of teens",
+                                  "Option 3": "Goodbye teens"
+                              },
+                              {
+                                  "No": "20",
+                                  "Option 1": "One score",
+                                  "Option 2": "Blind 20"
+                              },
+                              {
+                                  "No": "21",
+                                  "Option 1": "President’s salute",
+                                  "Option 2": "All womens age"
+                              },
+                              {
+                                  "No": "22",
+                                  "Option 1": "Two little ducks"
+                              },
+                              {
+                                  "No": "23",
+                                  "Option 1": "You and me"
+                              },
+                              {
+                                  "No": "24",
+                                  "Option 1": "Two dozen",
+                                  "Option 2": "Want somemore at 24"
+                              },
+                              {
+                                  "No": "25",
+                                  "Option 1": "Quarter",
+                                  "Option 2": "Silver Jublee Number",
+                                  "Option 3": "Wish to have a wife at 25",
+                                  "Option 4": "Duck & dive @ 25"
+                              },
+                              {
+                                  "No": "26",
+                                  "Option 1": "Republic Day"
+                              },
+                              {
+                                  "No": "27",
+                                  "Option 1": "Gateway to heaven"
+                              },
+                              {
+                                  "No": "28",
+                                  "Option 1": "Duck and its mate",
+                                  "Option 2": "Overweight @ 28",
+                                  "Option 3": "In a state"
+                              },
+                              {
+                                  "No": "29",
+                                  "Option 1": "In your prime",
+                                  "Option 2": "Gin & Wine",
+                                  "Option 3": "Rise & shine"
+                              },
+                              {
+                                  "No": "30",
+                                  "Option 1": "Women get flirty at 30"
+                              },
+                              {
+                                  "No": "31",
+                                  "Option 1": "Time for fun",
+                                  "Option 2": "Flavours at baskin Robins",
+                                  "Option 3": "Get up and run"
+                              },
+                              {
+                                  "No": "32",
+                                  "Option 1": "Mouth Full",
+                                  "Option 2": "Buckle my shoe"
+                              },
+                              {
+                                  "No": "33",
+                                  "Option 1": "All the 3s",
+                                  "Option 2": "Two little bees"
+                              },
+                              {
+                                  "No": "34",
+                                  "Option 1": "Dil mange more",
+                                  "Option 2": "Ask for more",
+                                  "Option 3": "Lions roar"
+                              },
+                              {
+                                  "No": "35",
+                                  "Option 1": "Flirty wife",
+                                  "Option 2": "Jump and jive"
+                              },
+                              {
+                                  "No": "36",
+                                  "Option 1": "Popular size",
+                                  "Option 2": "Three dozens",
+                                  "Option 3": "Yardstick"
+                              },
+                              {
+                                  "No": "37",
+                                  "Option 1": "Mixed luck",
+                                  "Option 2": "More than eleven",
+                                  "Option 3": "Lime and leamon"
+                              },
+                              {
+                                  "No": "38",
+                                  "Option 1": "Oversize",
+                                  "Option 2": "Christmas cake"
+                              },
+                              {
+                                  "No": "39",
+                                  "Option 1": "Watch your waistline"
+                              },
+                              {
+                                  "No": "40",
+                                  "Option 1": "Naughty 40",
+                                  "Option 2": "Life begins at",
+                                  "Option 3": "Men get naughty"
+                              },
+                              {
+                                  "No": "41",
+                                  "Option 1": "Life’s begun at 41",
+                                  "Option 2": "Time for some fun @ 41",
+                                  "Option 3": "Kiss and run"
+                              },
+                              {
+                                  "No": "42",
+                                  "Option 1": "Quit India Movement",
+                                  "Option 2": "Winnie the pooh"
+                              },
+                              {
+                                  "No": "43",
+                                  "Option 1": "Pain in the knee",
+                                  "Option 2": "Down on your knees",
+                                  "Option 3": "Climb a tree"
+                              },
+                              {
+                                  "No": "44",
+                                  "Option 1": "All the fours",
+                                  "Option 2": "Chor chor, all the 4"
+                              },
+                              {
+                                  "No": "45",
+                                  "Option 1": "Halfway there"
+                              },
+                              {
+                                  "No": "46",
+                                  "Option 1": "Up to tricks"
+                              },
+                              {
+                                  "No": "47",
+                                  "Option 1": "Year of Independence",
+                                  "Option 2": "Four and seven"
+                              },
+                              {
+                                  "No": "48",
+                                  "Option 1": "Four dozen",
+                                  "Option 2": "You are not late"
+                              },
+                              {
+                                  "No": "49",
+                                  "Option 1": "Rise and shine",
+                                  "Option 2": "Your waist line"
+                              },
+                              {
+                                  "No": "50",
+                                  "Option 1": "Half a century",
+                                  "Option 2": "Golden Jublee"
+                              },
+                              {
+                                  "No": "51",
+                                  "Option 1": "Charity begins at 51",
+                                  "Option 2": "I love my mum"
+                              },
+                              {
+                                  "No": "52",
+                                  "Option 1": "Pack of cards",
+                                  "Option 2": "Weeks in a year"
+                              },
+                              {
+                                  "No": "53",
+                                  "Option 1": "Stuck in a tree"
+                              },
+                              {
+                                  "No": "54",
+                                  "Option 1": "Clean the floor",
+                                  "Option 2": "House of bamboo door"
+                              },
+                              {
+                                  "No": "55",
+                                  "Option 1": "All the fives",
+                                  "Option 2": "Bunch of 5s",
+                                  "Option 3": "Snakes alive @ 55"
+                              },
+                              {
+                                  "No": "56",
+                                  "Option 1": "Pick up sticks",
+                                  "Option 2": "Was she worth it?"
+                              },
+                              {
+                                  "No": "57",
+                                  "Option 1": "Mutiny Year"
+                              },
+                              {
+                                  "No": "58",
+                                  "Option 1": "Make them wait",
+                                  "Option 2": "Time to retire"
+                              },
+                              {
+                                  "No": "59",
+                                  "Option 1": "Just retired"
+                              },
+                              {
+                                  "No": "60",
+                                  "Option 1": "Five dozen"
+                              },
+                              {
+                                  "No": "61",
+                                  "Option 1": "Bakers bun"
+                              },
+                              {
+                                  "No": "62",
+                                  "Option 1": "Turn the screw",
+                                  "Option 2": "Click the two"
+                              },
+                              {
+                                  "No": "63",
+                                  "Option 1": "Tickle me",
+                                  "Option 2": "Click the three"
+                              },
+                              {
+                                  "No": "64",
+                                  "Option 1": "Hard core",
+                                  "Option 2": "Catch the chor"
+                              },
+                              {
+                                  "No": "65",
+                                  "Option 1": "Old age pension"
+                              },
+                              {
+                                  "No": "66",
+                                  "Option 1": "Chakke pe chakka",
+                                  "Option 2": "All the 6s"
+                              },
+                              {
+                                  "No": "67",
+                                  "Option 1": "Made in heaven"
+                              },
+                              {
+                                  "No": "68",
+                                  "Option 1": "Check your weight",
+                                  "Option 2": "Saving grace"
+                              },
+                              {
+                                  "No": "69",
+                                  "Option 1": "Your place or mine",
+                                  "Option 2": "Ulta Pulta"
+                              },
+                              {
+                                  "No": "70",
+                                  "Option 1": "Lucky blind"
+                              },
+                              {
+                                  "No": "71",
+                                  "Option 1": "Bang the drum",
+                                  "Option 2": "Lucky bachelor"
+                              },
+                              {
+                                  "No": "72",
+                                  "Option 1": "Lucky 2"
+                              },
+                              {
+                                  "No": "73",
+                                  "Option 1": "Under the tree",
+                                  "Option 2": "A crutch and a flea"
+                              },
+                              {
+                                  "No": "74",
+                                  "Option 1": "Still want more",
+                                  "Option 2": "Lucky chor",
+                                  "Option 3": "Candy store",
+                                  "Option 4": "Lucky 4"
+                              },
+                              {
+                                  "No": "75",
+                                  "Option 1": "Lucky Five",
+                                  "Option 2": "Diamond Jublee"
+                              },
+                              {
+                                  "No": "76",
+                                  "Option 1": "Lucky six"
+                              },
+                              {
+                                  "No": "77",
+                                  "Option 1": "Two hockey sticks",
+                                  "Option 2": "hum saat saat hai",
+                                  "Option 3": "Double hockey sticks"
+                              },
+                              {
+                                  "No": "78",
+                                  "Option 1": "Heaven’s gate",
+                                  "Option 2": "Lucky seth (hindi)"
+                              },
+                              {
+                                  "No": "79",
+                                  "Option 1": "One more time",
+                                  "Option 2": "lucky nine"
+                              },
+                              {
+                                  "No": "80",
+                                  "Option 1": "Gandhi’s breakfast"
+                              },
+                              {
+                                  "No": "81",
+                                  "Option 1": "Corner shot"
+                              },
+                              {
+                                  "No": "82",
+                                  "Option 1": "Last of the two",
+                                  "Option 2": "Fat lady with a duck"
+                              },
+                              {
+                                  "No": "83",
+                                  "Option 1": "India wins Cricket World Cup",
+                                  "Option 2": "Time for tea"
+                              },
+                              {
+                                  "No": "84",
+                                  "Option 1": "Last of the chors",
+                                  "Option 2": "Seven dozen"
+                              },
+                              {
+                                  "No": "85",
+                                  "Option 1": "Staying alive",
+                                  "Option 2": "Grandma"
+                              },
+                              {
+                                  "No": "86",
+                                  "Option 1": "Between the sticks",
+                                  "Option 2": "Last six"
+                              },
+                              {
+                                  "No": "87",
+                                  "Option 1": "Grandpa",
+                                  "Option 2": "Fat lady with a crutch"
+                              },
+                              {
+                                  "No": "88",
+                                  "Option 1": "Two fat ladies"
+                              },
+                              {
+                                  "No": "89",
+                                  "Option 1": "All but one",
+                                  "Option 2": "Nearly there"
+                              }
+                          ];
+            (function($){
+                $.fn.extend({
+                    numAnim: function(options) {
+                        if ( ! this.length)
+                            return false;
+
+                        this.defaults = {
+                            endAt: 90,
+                            numClass: 'autogen-num',
+                            duration: 0.5,   // seconds
+                            interval: 25  // ms
+                        };
+                        var settings = $.extend({}, this.defaults, options);
+
+                        var $num = $('<span/>', {
+                            'class': settings.numClass
+                        });
+
+                        return this.each(function() {
+                            var $this = $(this);
+
+                            // Wrap each number in a tag.
+                            var frag = document.createDocumentFragment(),
+                                numLen = settings.endAt.toString().length;
+                            for (x = 0; x < numLen; x++) {
+                                var rand_num = Math.floor( Math.random() * 10 );
+                                frag.appendChild( $num.clone().text(rand_num)[0] )
+                            }
+                            $this.empty().append(frag);
+
+                            var get_next_num = function(num) {
+                                ++num;
+                                if (num > 9) return 0;
+                                return num;
+                            };
+
+                            // Iterate each number.
+                            $this.find('.' + settings.numClass).each(function() {
+                                var $num = $(this),
+                                    num = parseInt( $num.text() );
+
+                                var interval = setInterval( function() {
+                                    num = get_next_num(num);
+                                    $num.text(num);
+                                }, settings.interval);
+
+                                setTimeout( function() {
+                                    clearInterval(interval);
+                                }, settings.duration * 1000 - settings.interval);
+                            });
+
+                            setTimeout( function() {
+                                $this.text( settings.endAt.toString() );
+                                $("#num-" + settings.endAt).addClass("generated");
+
+                            }, settings.duration * 1000);
+                        });
+                    }
+                });
+            })(jQuery);
+
+            var generated_numbers = [];
+
+            $(function(){
+                for(i=1; i<=90; i++){
+                    $("<div />").addClass("num").html(i).attr("id","num-" + i).appendTo("#grid-container");
+                }
+                console.log($("#player_name").val());
+
+                $("<div />").addClass("numCardHeader").html("Akash Jain").attr("id","num-card-name").appendTo("#card-container");
+                for(i=1; i<=27; i++){
+                    $("<div />").addClass("numCard").html(i).attr("id","num-card-" + i).appendTo("#card-container");
+                }
+                var cw = $('.num').width();
+                $('.num').css({'height':cw+'px','line-height':cw+'px'});
+
+
+
+            });
+
+            function get_random_int(max) {
+              return Math.floor(Math.random() * Math.floor(max));
+            }
+            function generate_card_numbers(){
+              // console.log(get_random_int(91));
+              console.log("Here");
+                  var range = [0,0,0,0,0,0,0,0,0];
+                  var ticket_page = {};
+                  var count = 1;
+                  var max_num = 27;
+                  var j = 1;
+                  var ticket = {};
+                  while(j <= max_num)
+                  {
+                      rand_num = get_random_int(91)
+                      if(rand_num <= 0 || rand_num in ticket)
+                          continue
+                      else
+                      {
+                          if(rand_num < 10 && range[0] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[0] = range[0] + 1
+                              j = j + 1
+                          }
+                          else if((rand_num < 20 && rand_num >= 10) && range[1] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[1] = range[1] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num < 30 && rand_num >=20) && range[2] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[2] = range[2] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num < 40 && rand_num >= 30) && range[3] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[3] = range[3] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num < 50 && rand_num >= 40) && range[4] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[4] = range[4] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num < 60 && rand_num >= 50) && range[5] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[5] = range[5] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num < 70 && rand_num >= 60) && range[6] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[6] = range[6] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num < 80 && rand_num >= 70) && range[7] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[7] = range[7] + 1
+                              j = j + 1
+                          }
+                          else if( (rand_num <=90 && rand_num >= 80) && range[8] < 3)
+                          {
+                              ticket[rand_num] = 1
+                              range[8] = range[8] + 1
+                              j = j + 1
+                          }
+                          else
+                              continue
+                        }
+                    }
+                    console.log(ticket)
+                  ticket_page=Object.keys(ticket)
+                  var final_list = new Array(3);
+                  var k = 0;
+                  final_list[0] = []
+                  final_list[1] = []
+                  final_list[2] = []
+                  for(let col in [0,1,2,3,4,5,6,7,8])
+                    for(let row in [0,1,2])
+                      final_list[row].push(ticket_page[k++])
+                  for(let row in [0,1,2])
+                  {
+                      var col = 0;
+                      while(col < 4)
+                      {
+                        var del_num = get_random_int(9);
+                        if(final_list[row][del_num] != "-")
+                        {
+                          final_list[row][del_num] = "-";
+                          col += 1;
+                        }
+                      }
+                    }
+                  return final_list
+              }
+
+
+            function generateNum(){
+                if(generated_numbers.length == 90){
+                    alert("Full House!");
+                    return;
+                }
+                while(true){
+                    var i = get_random_int_main(1, 90);
+
+                    if(i < 91 && i > 0 && $.inArray(i, generated_numbers) == -1){
+                        //$("#number").html(i);
+                        if(i < callings.length)
+                        {
+                          var callText = "";
+                          for (var key in callings[i - 1]){
+                            if (key != "No")
+                            {
+                              callText += "*" + callings[i - 1][key] + "<br>";
+                              console.log(callings[i - 1][key]);
+                            }
+
+                          }
+                          $("#numberCalls").html(callText);
+                        }
+                        $("#number").numAnim({
+                            endAt: i
+                        });
+                        if(generated_numbers.length > 0)
+                          $("#number_1").text(generated_numbers[generated_numbers.length - 1]);
+                        else
+                          $("#number_1").text("");
+
+                        if(generated_numbers.length > 1)
+                          $("#number_2").text(generated_numbers[generated_numbers.length - 2]);
+                        else
+                          $("#number_2").text("");
+
+                        if(generated_numbers.length > 2)
+                          $("#number_3").text(generated_numbers[generated_numbers.length - 3]);
+                        else
+                          $("#number_3").text("");
+
+                        generated_numbers.push(i);
+
+                        //$("#num-" + i).addClass("generated");
+                        //generated_numbers.push(i);
+                        //setTimeout("generateNum()",200);
+                        break;
+                    }
+                }
+            }
+
+            function undoNumber(){
+              if(generated_numbers.length == 0){
+                  alert("No more numbers in the board!!");
+                  return;
+              }
+              if(confirm("Do you really want to Undo??\nAfter undo you might not get the same number!!"))
+              {
+                var lastNumber = generated_numbers.pop();
+
+                if(generated_numbers.length > 0)
+                  $("#number").text(generated_numbers[generated_numbers.length - 1]);
+                else
+                  $("#number").text("");
+
+                if(generated_numbers.length > 1)
+                  $("#number_1").text(generated_numbers[generated_numbers.length - 2]);
+                else
+                  $("#number_1").text("");
+
+                if(generated_numbers.length > 2)
+                  $("#number_2").text(generated_numbers[generated_numbers.length - 3]);
+                else
+                  $("#number_2").text("");
+
+                if(generated_numbers.length > 3)
+                  $("#number_3").text(generated_numbers[generated_numbers.length - 4]);
+                else
+                  $("#number_3").text("");
+
+                if($("#num-" + lastNumber).hasClass("generated"))
+                  $("#num-" + lastNumber).removeClass("generated");
+                alert(lastNumber + " Removed from board!!");
+              }
+            }
+            function generateCard(){
+              $("#card-container").css("display", "");
+              var gen_numbers = generate_card_numbers();
+              // con
+              console.log(gen_numbers);
+              var row = 0;
+              var player_name = $("#player_name").val();
+              if (player_name.trim() == "" || player_name === undefined)
+                player_name = "Tambola"
+              player_name = titleCase(player_name);
+              $("#num-card-name").html(player_name);
+              for(var i=1; i<=27; i++){
+                  $("#num-card-" + i).html(gen_numbers[row][(i - 1)%9]);
+                  if($("#num-card-" + i).hasClass("numCard-yellow") && gen_numbers[row][(i - 1)%9] == "-")
+                    $("#num-card-" + i).removeClass("numCard-yellow");
+                  if(!$("#num-card-" + i).hasClass("numCard-yellow") && gen_numbers[row][(i - 1)%9] != "-")
+                      $("#num-card-" + i).addClass("numCard-yellow");
+                  // numCard-yellow
+                  if(i%9 == 0)
+                    row++;
+                  // $("<div />").addClass("numCard").html(i).attr("id","num-card-" + i).appendTo("#card-container");
+              }
+              html2canvas($('#card-container'), {
+                  onrendered: function(canvas) {
+                    // canvas.replace("none", "")
+                    // $('#canvas').replaceWith(canvas);
+
+                      console.log(canvas);
+                      $("#card-container").css("display", "none");
+                      var img    = canvas.toDataURL("image/png");
+                      // console.log(img);
+                      // var url = img.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+                      // window.open(url);
+                      // var gen_numbers = generate_card_numbers();
+                      // var row = 0;
+                      // for(i=1; i<=27; i++){
+                      //     $("#num-card-").html(gen_numbers[row][i%9])
+                      //     if(i%9 == 0)
+                      //       row++;
+                      //     // $("<div />").addClass("numCard").html(i).attr("id","num-card-" + i).appendTo("#card-container");
+                      // }
+                      // $("#num-38").html("9")
+
+                      var link = document.createElement("a");
+                      link.href = img.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+                      link.download = player_name + " Tambola(Akash_Jain).png";
+                      link.click();
+
+                      $('#canvas').css("display", "None");
+                  },
+              });
+
+            }
+            function titleCase(string) {
+              var sentence = string.toLowerCase().split(" ");
+              for(var i = 0; i< sentence.length; i++){
+                 sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+              }
+              return sentence.join(" ");
+           }
+            function get_random_int_main(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+        </script>
+    </body>
+</html>
+
